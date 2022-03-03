@@ -20,15 +20,16 @@ class FileStorage:
         if cls is None:
             return FileStorage.__objects
         else:
-            my_dict = {}
+            temp = {}
             for key, val in FileStorage.__objects.items():
-                if val.__class__ == cls:
-                    my_dict[key] = val
-            return my_dict
+                if val.__class__.__name__ == cls:
+                    temp[key] = val
+            return temp
 
     def new(self, obj):
-        """Adds new object to storage dictionary"""
-        self.all().update({obj.to_dict()['__class__'] + '.' + obj.id: obj})
+        """Adds object to storage dictionary"""
+        if obj is not None:
+            FileStorage.__objects[obj.id] = obj
 
     def save(self):
         """Saves storage dictionary to file"""
@@ -41,6 +42,13 @@ class FileStorage:
 
     def reload(self):
         """Loads storage dictionary from file"""
+        from models.base_model import BaseModel
+        from models.user import User
+        from models.place import Place
+        from models.state import State
+        from models.city import City
+        from models.amenity import Amenity
+        from models.review import Review
 
         classes = {
                     'BaseModel': BaseModel, 'User': User, 'Place': Place,
@@ -48,11 +56,10 @@ class FileStorage:
                     'Review': Review
                   }
         try:
-            temp = {}
             with open(FileStorage.__file_path, 'r') as f:
                 temp = json.load(f)
                 for key, val in temp.items():
-                        self.all()[key] = classes[val['__class__']](**val)
+                    FileStorage.__objects[key] = eval(val['__class__'])(**val)
         except FileNotFoundError:
             pass
 

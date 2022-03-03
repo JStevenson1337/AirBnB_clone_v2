@@ -116,38 +116,29 @@ class HBNBCommand(cmd.Cmd):
         pass
 
     def do_create(self, args):
-        """Creates a new instance of a class"""
+        """ Create an object of any class"""
+        split_args = args.split()
         if not args:
             print("** class name missing **")
             return
-        if args not in HBNBCommand.classes:
+        elif split_args[0] not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
-
-        # create object
-        args = shlex.split(args)
-        obj = eval(args[0] + "()")
-        while args:
-            arg = args.pop(0)
-            if arg in HBNBCommand.types:
-                obj.__dict__[arg] = HBNBCommand.types[arg](arg)
+        new_instance = HBNBCommand.classes[split_args[0]]()
+        for i in range(1, len(split_args)):
+            key_val = split_args[i].partition('=')
+            new_key = key_val[0]
+            new_val = key_val[2]
+            if '\"' in new_val:
+                new_val = new_val[1:-1]
+                new_val = new_val.replace("_", " ")
+            elif '.' in new_val:
+                new_val = float(new_val)
             else:
-                obj.__dict__[arg] = arg
-            if '=' in arg:
-                arg = arg.partition('=')
-                obj.__dict__[arg[0]] = arg[2]
-                if val.isdigit(c_id):
-                    obj.__dict__[arg[0]] = int(arg[2])
-                else:
-                    try:
-                        obj.__dict__[arg[0]] = float(arg[2])
-                        val = float(arg[2])
-                    except ValueError:
-                        pass
-            setattr(obj, arg, arg)
-        obj.save()
-        print(obj.id)
-
+                new_val = int(new_val)
+            new_instance.__dict__[new_key] = new_val
+        new_instance.save()
+        print(new_instance.id)
 
 
     def help_create(self):
