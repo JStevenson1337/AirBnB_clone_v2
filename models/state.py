@@ -16,13 +16,10 @@ class State(BaseModel, Base):
             'City', backref='states',
             cascade='all, delete-orphan')
     else:
-        name = ""
-        cities = []
+        @property
+        def cities(self):
+            """
+            returns list of all cities in state
+            """
+            return [c for c in self.__dict__['cities']]
 
-    @property
-    def cities(self):
-        """ getter """
-        city_dict = {}
-        for city in self.cities:
-            city_dict[city.id] = city.name
-        return city_dict
