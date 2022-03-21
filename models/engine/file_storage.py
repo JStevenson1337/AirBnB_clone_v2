@@ -63,3 +63,8 @@ class FileStorage:
                 if val == obj:
                     del FileStorage.__objects[key]
                     return
+
+    def close(self):
+        """Saves storage dictionary to file and closes file"""
+        self.reload()
+ 
