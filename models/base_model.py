@@ -4,6 +4,7 @@ import uuid
 from datetime import datetime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, String, DateTime
+import models
 
 
 Base = declarative_base()
@@ -55,3 +56,8 @@ class BaseModel:
                 my_dict[key] = datetime.isoformat(val)
         my_dict['__class__'] = str(type(self)).split('.')[-1].split("'")[0]
         return my_dict
+
+
+    def delete(self):
+        """Deletes current instance"""
+        models.storage.delete(self)
