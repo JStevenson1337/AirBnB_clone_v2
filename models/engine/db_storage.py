@@ -12,23 +12,27 @@ from models.place import Place
 from models.review import Review
 from models.amenity import Amenity
 
+
 class_list = [City, State, User, Place, Review, Amenity]
+
 
 class DBStorage:
     __engine = None
     __session = None
+
     def __init__(self):
         """
         Initializes engine and session
         """
-        DIAL='mysql'
+        DIAL = 'mysql'
         DRIVER = 'mysqldb'
         USER = os.environ.get('HBNB_MYSQL_USER')
         PASS = os.environ.get('HBNB_MYSQL_PWD')
         HOST = os.environ.get('HBNB_MYSQL_HOST')
         DB = os.environ.get('HBNB_MYSQL_DB')
-        self.__engine = create_engine('{}+{}://{}:{}@{}/{}'.format(DIAL, DRIVER, USER, PASS, HOST, DB),
-                                      pool_pre_ping=True)
+        self.__engine = create_engine('{}+{}://{}:{}@{}/{}'.format
+                                      (DIAL, DRIVER, USER,
+                                       PASS, HOST, DB), pool_pre_ping=True)
         if os.getenv('HBNB_ENV') == 'test':
             Base.metadata.drop_all(self.__engine)
 
@@ -68,14 +72,12 @@ class DBStorage:
         reloads the database session
         """
         Base.metadata.create_all(self.__engine)
-        self.__session = scoped_session(sessionmaker(bind=self.__engine, expire_on_commit=False))
-
-
+        self.__session = scoped_session(sessionmaker
+                                        (bind=self.__engine,
+                                         expire_on_commit=False))
 
     def close(self):
         """
         calls remove() on private sessionmaker object
         """
         self.__session.remove()
-
-
